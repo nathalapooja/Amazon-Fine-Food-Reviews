@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>ITCS 6190 : CLOUD COMPUTING FOR DATA ANALYSIS</title>
+	<link rel="stylesheet" type="text/css" href="blogexample.css">
+</head>
+<style>
+body {
+    background-color: white;	
+    margin: 1cm 1cm 1cm 1cm;
+}
+
+#heading {
+text-align: center;
+}
+}
+</style>
+<body>
+	<p class="dates" id = "heading" >ITCS 6190 : CLOUD COMPUTING FOR DATA ANALYSIS</p> 
+	<h1 id = "heading">AMAZON FINE FOOD REVIEWS CLASSIFICATION</h1>
+	<p id = "heading"> Dilly, Sai Nishanth</p> 
+	<p id = "heading"> Kamshetty, Amulya</p> 
+	<p id = "heading"> Nathala, Pooja Reddy</p> 
+<h1>Introduction </h1>
+<p class="paras">
+	 The  idea of this project is to build a model which  predicts the rating based on Amazon food reviews. 
+	 Based on a survey, US economists found that when a restaurant rating improved by just half a star it was very 
+	 much more likely to be full at peak dining times, which proves good ratings boost takings while terrible ones 
+	 can close you down. Hence ratings play a very important role for a business’s fortunes. Therefore, prediction 
+	 of a rating based on a review will help the customer decide whether to buy a product or no, by just seeing the 
+	 ratings instead of reading the whole review.
+
+
+</p>
+
+<hr>
+
+<h1>Dataset </h1>
+<h2>Data Collection : </h2>
+We are using the dataset by Kaggle, Amazon fine food review dataset, which consist of 568454 rows of Amazon users reviews 
+upto oct 2012. The dataset consists of single CSV file, Reviews.csv, and a corresponding SQLite table named Reviews in 
+database.sqlite. We are taking input in .csv format therefore we are using Reviews.csv file. It has the columns : Id, ProductId,
+ UserId, ProfileName, HelpfulnessNumerator, HelpfulnessDenominator, Score, Time, Summary, Text. We are only using the score and 
+ text columns of each unique ProductID for our algorithm implementation.
+
+<h2>Description of dataset: </h2>
+<p class="paras">
+<ul>
+<li>-Id-row number in dataset </br>
+<li>-ProductId - unique identifier for the product </br>
+<li>-UserId - unique identifier for the user </br>
+<li>-ProfileName- profile names of the amazon users who gave rating and reviews </br>
+<li>-HelpfulnessNumerator - number of users who found the review helpful </br>
+<li>-HelpfulnessDenominator - number of users who indicated whether they found the review helpful </br>
+<li>-Score - rating between 1 and 5 </br>
+<li>-Time - timestamp for the review </br>
+<li>-Summary - brief summary of the review </br>
+<li>-Text - text of the review </br>
+</ul>
+<h2>Challenges with Data:</h2>
+<p> The food reviews and rating provided in the dataset are mostly positive.Total number of rows-</p> 
+<ul>
+<li>-Number of rows with score 1- 52268 </br>
+<li>-Number of rows with score 2- 29769 </br>
+<li>-Number of rows with score 3- 42640 </br>
+<li>-Number of rows with score 4- 80655 </br>
+<li>-Number of rows with score 5- 363115 </br>
+<li>-The total percentage of rows having positive rating is 78.06% </br>
+</br>
+</ul>
+<p> Columns considered for Algorithms Implementation:</p>
+<ul>
+<li>-Unique Product ID</li>
+<li>-Score</li>
+<li>-Text</li>
+</ul>
+
+
+<h2>Sample data: </h2>
+</br>
+<img src="picone.png" alt="Sample Data" height="100" width= "800">
+
+</br>
+</br>
+
+<h2>Key Decisions in Data Preparation:</h2>
+<p class="paras">
+ - We are taking  the SCore and Text columns from the amazon dataset,trimming the headers and appending it to the new dataset named dataset with new column names as rating and review respectively.
+<br> - We considered only english alphabets and numbers (a-z, A - Z, 0-9), ignoring the special characters in both algorithms implemented in this project.
+<br> - Stopwords in english are ignored using the nltk.corpus package and all other words are stemmed and  lemmatized using the nltk.stem package. (punctuation, rt, via, us, it, i’m etc)
+<br> - Emoticons are removed (:) , :( etc) if any
+<br> - Words ending with -, words in ‘ ’,regular expressions and HTML tags are removed
+
+
+<hr>
+
+<h1>Algorithms</h1>
+<p class="paras">
+<b>Naive Bayes Algorithm : </b> In machine learning, naive Bayes classifiers are a family of simple probabilistic classifiers based on applying Bayes' theorem with strong (naive) independence assumptions between the features. Naive Bayes is a collection of classification algorithms based on Bayes Theorem. It is not a single algorithm but a family of algorithms that all share a common principle, that every feature being classified is independent of the value of any other feature.
+</br>We implemented the multinomial Naive Bayes with smoothing. To classify, we calculated probabilities of the review belonging to each rating and then selected the class value with highest probability. We have performed computations by summing logs of probabilities rather than multiplying probabilities for underflow prevention.
+</br>
+<img src="nb_formula.png" height ="100" width = "300">
+</br>
+The number of different classes in this algorithm are 5 as the score is given from value 1 to 5 in the score column. So, the given input review can be classified into any of the 5 classes according to Model Fitted to the train data. We are partitioning the Input dataset from kaggle into 0.6 and 0.4 parts. 0.6 part of dataset is selected randomly and used for training, the remaining 0.4 data part is used for testing. The algorithm is implemented as follows: we are calculating the word and its corresponding P(xi|cj) probability according to the class to which it belongs using nk+alpha/n+alpha*vocabulary equation for each class. In the train data for each word in each review we are taking the corresponding probabilities in each class and add them to the class probabilities. Add all the probabilities for each word and finally find the class to which the review belongs to. We are executing for different values of alpha, value 5 have the highest accuracy.
+
+</br>
+</br>
+<b>K-Nearest Neighbors Algorithm : </b> KNN purpose is to use a database in which the data points are separated into several classes to predict the classification of a new sample point.
+For the prediction of rating, the algorithm searches through the training dataset for the k most similar instances.
+Hamming distance has been used to classify reviews. 
+</br>
+</br>
+
+<b>Logistic Regression Algorithm : </b>  It is a statistical method for analyzing a dataset in which there  are one or more independent variables that determine an outcome. 
+Multinomial logistic regression is a classification method which explains logistic regression to multiclass problems(more than 2 discrete outcomes). The reviews, which are the independent variables are split into words and TFIDF scores are calculated. Then that score and rating is used to build the logistic regression model.  
+</br>
+</p>
+<hr>
+<h1>Installation </h1>
+
+<b>Required libraries and packages: </b>
+<ul>
+<li> 1) pip </br>
+step to install: sudo apt-get install python-pip
+<li> 2) NLTK library - NLTK 3.2.1 </br>
+steps to install: a)$python </br>
+ b)import nltk </br>
+ c)nltk.download('stopwords') </br>
+ d)nltk.download('wordnet') </br>
+<li> 3) scikit - Latest </br>
+steps to install: a)sudo pip install scikit </br>
+<li> 4) Numpy - Latest  </br>
+steps to install: a)sudo pip install numpy
+<li> 5) Pandas - Latest </br>
+steps to install: a)sudo pip install pandas</p> 
+
+</ul>
+
+<p><b> System configrations to run: </b></p> 
+<ul>
+<li>a) download spark-2.2.0-bin-hadoop2.7.tgz zip file from google</br>
+<li>b)tar -xvzf spark-2.2.0-bin-hadoop2.7.tgz</br>
+<li>c)sudo mv spark-2.2.0-bin-hadoop2.7 ~/</br>
+<li>d)go to spark-2.2.0-bin-hadoop2.7 folder from home</br>
+<li>e)go to conf folder inside it and change the spark.driver.memory in spark-defaults.conf to 8g if your system RAM is more than 8G.</br>
+
+
+</ul>
+
+<p><b> Steps to run: </b></p> 
+<ul>
+<li>1) Download the zip folfer and unzip it.The folder has all code files, input user reviews file</br>
+<li>2) Following are the names of the files and their actions- </br>
+	NaiveBAccuracy.py - Naive Bayes implimentation from scratch, prints the accuracy for alpha value 1 to 5 </br>
+	NaiveBSklearn.py - Naive Bayes algorithm implemented using scikit learn library </br>
+	NaiveBInput.py - Naive Bayes algorithm to fit the user input reviews from input file to the model and predict the rating of the reviews with alpha value 2 and writing these user reviews along with outputs to output file</br>
+</br>KNNAccuracy.py - K Nearest Neighbor implimentation from scratch for K value between 10 to 50 with stepsize of 10 </br>
+	KNNSklearn.py - K Nearest Neighbor algorithm implemented using scikit learn library </br>
+	KNNInput.py - K Nearest Neighbor algorithm to fit the user input reviews from input file to the model and predict the rating of given input reviews with K  value 25 and writing these user reviews along with outputs to output file</br>
+        LogisticAccuracy.py- Logistic regression implementation from scratch, prints the accuracy of the predictions made by the algorithm </br>
+        LogisticSklearn.py-Logistic Regression implemented using the scikit learn library</br>
+	
+	
+	<li>3) To run the file, follow the below command : </br>
+	spark-submit <filename> </br>
+	Example: spark-submit NaiveBAccuracy.py </br>
+</br>
+</ul>
+
+<p><b> Important Note :  </b></p> 
+<ul>
+<li>a)  Make sure that the dataset file is named as Reviews.csv</br>
+<li>b)  Reviews.csv file should be present in the same directory as the pyspark file</br>
+<li>c)  Input.txt has the user input reviews which should be in same directory for which ratings are predicted.</br>
+<li>d)  Output file will be stored in the same directory of code files and inputs</br>
+
+</ul>
+
+<p> As the dataset taken have size above 300 MB we used an amazon EC2 instance for running this huge dataset, We have create Amazon Ec2 Instance: </br>
+<b>Steps to create and launch Amazon EC2 instance :</b></br>
+<ul>
+<li>1.) go to AWS console choose launch instance and select ubuntu 64 bit operating system</br>
+<li>2.) Choose instance Type t2.2xlarge general purpose with 32GB memory and click on create</br>
+<li>3.) Make sure the instance is running and download the key file to desktop</br>
+</ul>
+<img src="Screen Shot 2017-12-04 at 7.11.37 PM.png" height ="400" width = "1000"> </br>
+<img src="Screen Shot 2017-12-04 at 7.41.13 PM.png" height ="400" width = "1000"> </br>
+<img src="Screen Shot 2017-12-04 at 7.41.30 PM.png" height ="400" width = "1000"> </br>
+<p><b>To connect to the instance type: </b></p> 
+<ul>
+<li>4.)cd Desktop</br>
+<li>5.)chmod 400 <keyfile></br>
+<li>6.)ssh -i “<keyfile>.pem" ubuntu@ec2-52-14-246-18.us-east-2.compute.amazonaws.com</br>
+<li>7.)Follow above steps to install required packages to run project.</br>
+<li>8.) Finally, use FileZilla to connect to EC2 instance for file transfer between your server and desktop.</br>
+
+</ul>
+
+</br>
+</br>
+
+
+</p>
+<hr>
+
+<h1>Evaluation </h1>
+<h2>Screenshots </h2>
+<p><b>Naive Bayes Accuracy : </b></p>
+<img src="NB_accuracy_1.png" height ="100" width = "800">
+<img src="NB_accuracy_5.png" height ="100" width = "800">
+<img src="NB_accuracy_3.png" height ="120" width = "800">
+<img src="NB_accuracy_2.png" height ="120" width = "800">
+<img src="NB_accuracy_4.png" height ="120" width = "800">
+</br>
+<p><b>Naive Bayes prediction using user Input : </b></p>
+<img src="NB_input_1.png" height ="250" width = "1000">
+</br>
+<p><b>Naive Bayes using Sklearn: </b></p>
+<img src="NB_sklearn.png" height ="120" width = "800">
+</br>
+<p><b>KNN prediction using user Input : </b></p>
+<img src="knn_input.png" height ="250" width = "800">
+</br>
+<p><b>KNN Accuracy : </b></p>
+<img src="knn_accuracy.png" height ="120" width = "800">
+</br>
+<p><b>KNN using Sklearn : </b></p>
+<img src="knn_lib.png" height ="120" width = "400">
+</br>
+<p><b>Logistic Regression using Sklearn : </b></p>
+<img src="logistic_lib.png" height ="120" width = "800">
+</br>
+<p><b>Logistic Accuracy : </b></p>
+<img src="logistic_accuracy.png" height ="120" width = "800">
+</br>
+<hr>
+<h1>Project Deliverables </h1>
+<h3>Core Deliverables : </h3>
+<ul>
+<li>Pre-processing of data set using NLTK libraries</li>
+<li>Implementation of K-Nearest Neighbors and Naive Bayes algorithms and finding the correctness of algorithm using accuracy of predicted Rating
+<li>Comparison of accuracy of implemented algorithms with scikit-learn libraries </li>
+</ul>
+
+<h3>Additional Deliverables : </h3>
+<ul>
+<li>Implementation of Logistic Regression algorithm for rating prediction by building the model</li>
+<li>Implementation of Logistic Regression using scikit-learn library.</li>
+<li>Taking review from user reviews file and predicting the rating</li>
+
+</ul>
+
+<hr>
+<h1>Additional Comments</h1>
+<ul>
+<li>Faced java outofmemory error while running for 300MB dataset, which was resolved by increasing  spark.driver.memory in spark-defaults.conf file. </li>
+<li> Project was run on Amazon Ec2 instance, 8 cpus and 32GB memory.</li>
+<li>Amazon food Data set ratings are biased towards 5, this gave us inconsistencies while calculating accuracies. </li>
+
+</ul>
+<hr>
+<h1>Task  Division </h1>
+<h3>Dilly, Sai Nishanth</h3>
+<p>Implemented the K-nearest neighbor algorithm </br>
+Implemented the Logistic Regression algorithm </br>
+Taking user review and predicting the rating based on the model built using KNN and Naive Bayes
+</p>
+<h3>Nathala, Pooja Reddy</h3>
+<p> Implemented the prediction model using Naive Bayes algorithm</br>
+Implementation of KNN algorithm with scikit-learn libraries</br>
+Calculating the accuracy of the fitted data </p>
+<h3>Kamshetty, Amulya</h3>
+<p>Retrieving, Cleaning and preprocessing the data. For example, removing the stop word, non-alphanumeric characters, Stemming and lemming. </br>
+Implementation of Naive-Bayes algorithm with scikit-learn libraries</p>
+<hr>
+<h1>References </h1>
+<p class = "paras">
+<ul>
+<li>J. McAuley and J. Leskovec.<a href="http://i.stanford.edu/~julian/pdfs/www13.pdf"> From amateurs to connoisseurs: modeling the evolution of user expertise through online reviews.</a> WWW, 2013.
+<li><a href="https://www.analyticsvidhya.com/blog/2017/09/naive-bayes-explained/">https://www.analyticsvidhya.com/blog/2017/09/naive-bayes-explained/</a></li>
+<li><a href="https://towardsdatascience.com/building-a-logistic-regression-in-python-step-by-step-becd4d56c9c8">  https://towardsdatascience.com/building-a-logistic-regression-in-python-step-by-step-becd4d56c9c8</li>
+</ul>
+
+
+
+</body>
+</html>
